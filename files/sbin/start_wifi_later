@@ -20,7 +20,7 @@ set_macaddr()
 	config_get path $device path
 
 	if [ -n "`echo $path | grep "pci0000"`" ] ; then
-		uci -q set wireless.$1.macaddr="$(macaddr_add $(cat /sys/class/net/eth1/address) +1)"
+		uci -q set wireless.$1.macaddr="$(macaddr_add $(cat /sys/class/net/eth1/address) +0)"
 		uci -q commit wireless
 	fi
 }
