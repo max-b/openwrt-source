@@ -1,0 +1,78 @@
+From 85ff29a3f60eaf7fe980d9db77d3dc08b152d4b5 Mon Sep 17 00:00:00 2001
+From: hdm <handongming@gl-inet.com>
+Date: Tue, 2 May 2017 10:36:42 +0800
+Subject: [PATCH] qca9887 start wifi later and set 5g macaddr
+
+---
+ files/etc/uci-defaults/55_start_wifi_later |  3 ++
+ files/sbin/start_wifi_later                | 48 ++++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+)
+ create mode 100644 files/etc/uci-defaults/55_start_wifi_later
+ create mode 100755 files/sbin/start_wifi_later
+
+diff --git a/files/etc/uci-defaults/55_start_wifi_later b/files/etc/uci-defaults/55_start_wifi_later
+new file mode 100644
+index 0000000..33063c4
+--- /dev/null
++++ b/files/etc/uci-defaults/55_start_wifi_later
+@@ -0,0 +1,3 @@
++#!/bin/sh
++/sbin/start_wifi_later &
++exit 0
+diff --git a/files/sbin/start_wifi_later b/files/sbin/start_wifi_later
+new file mode 100755
+index 0000000..c2a474e
+--- /dev/null
++++ b/files/sbin/start_wifi_later
+@@ -0,0 +1,48 @@
++#!/bin/sh
++
++. /lib/ar71xx.sh
++. /lib/functions.sh
++. /lib/functions/system.sh
++
++set_5g_macaddr()
++{
++	config_load wireless
++	config_foreach set_macaddr wifi-iface
++}
++
++set_macaddr()
++{
++	local device path
++
++	config_load wireless
++
++	config_get device "$1" device
++	config_get path $device path
++
++	if [ -n "`echo $path | grep "pci0000"`" ] ; then
++		uci -q set wireless.$1.macaddr="$(macaddr_add $(cat /sys/class/net/eth1/address) +1)"
++		uci -q commit wireless
++	fi
++}
++
++#if [ -n "`df -h | grep overlayfs`" ]; then
++
++while true; do
++	if [ -f /etc/urandom.seed ]; then
++	
++		uci -q batch <<-EOF >/dev/null
++			set wireless.radio0.disabled='0'
++			set wireless.radio1.disabled='0'
++			commit wireless
++		EOF
++	
++		set_5g_macaddr
++		break
++	fi
++	sleep 10
++done
++
++wifi
++
++exit 0
++
+-- 
+1.9.1
+

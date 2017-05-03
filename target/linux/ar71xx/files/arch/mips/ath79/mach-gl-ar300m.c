@@ -41,8 +41,8 @@
 #define GL_AR300M_KEYS_DEBOUNCE_INTERVAL    (3 * GL_AR300M_KEYS_POLL_INTERVAL)
 
 #define GL_AR300M_MAC0_OFFSET   0
-#define GL_AR300M_MAC1_OFFSET   6
-#define GL_AR300M_WMAC_CALDATA_OFFSET   0x1000
+#define GL_AR300M_MAC1_OFFSET   0
+#define GL_AR300M_WMAC_CALDATA_OFFSET   0x0000
 #define GL_AR300M_PCIE_CALDATA_OFFSET   0x5000
 
 static struct gpio_led gl_ar300m_leds_gpio[] __initdata = {
@@ -153,7 +153,7 @@ static void __init gl_ar300m_setup(void)
     ath79_switch_data.phy4_mii_en = 1;
     ath79_register_eth(1);
 
-    ath79_init_mac(tmpmac, art + GL_AR300M_WMAC_CALDATA_OFFSET + 2, 0);
+    ath79_init_mac(tmpmac, art + GL_AR300M_WMAC_CALDATA_OFFSET, 0);
     ath79_register_wmac(art + GL_AR300M_WMAC_CALDATA_OFFSET, tmpmac);
 
     /* enable usb */
