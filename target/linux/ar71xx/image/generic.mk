@@ -160,7 +160,7 @@ TARGET_DEVICES += gl-domino
 
 define Device/gl-mifi
   DEVICE_TITLE := GL MIFI
-  DEVICE_PACKAGES := kmod-usb-core kmod-usb2
+  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-net
   BOARDNAME = GL-MIFI
   IMAGE_SIZE = 16000k
   CONSOLE = ttyATH0,115200
