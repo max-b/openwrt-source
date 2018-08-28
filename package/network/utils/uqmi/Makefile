@@ -1,10 +1,10 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=uqmi
-PKG_RELEASE:=1
+PKG_RELEASE:=3
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL=$(LEDE_GIT)/project/uqmi.git
+PKG_SOURCE_URL=$(PROJECT_GIT)/project/uqmi.git
 PKG_SOURCE_DATE:=2016-12-19
 PKG_SOURCE_VERSION:=8ceeab690d8c6f1e3afbd4bcaee7bc2ba3fbe165
 PKG_MIRROR_HASH:=b3637ff04e51769137af1c5e173e73311e11c3c2dcc49eeaca6aa3520f61d247
@@ -14,6 +14,8 @@ PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=
 
 PKG_BUILD_PARALLEL:=1
+
+PKG_FLAGS:=nonshared
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk

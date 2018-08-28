@@ -19,6 +19,7 @@ HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/gettext-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Jo-Philipp Wich <jo@mein.io>
 PKG_LICENSE:=GPL-3.0+
+PKG_CPE_ID:=cpe:/a:gnu:gettext
 
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
@@ -37,7 +38,7 @@ endef
 
 TARGET_CFLAGS += $(FPIC)
 ifneq ($(HOST_OS),Linux)
-  TARGET_CFLAGS += -I$(STAGING_DIR)/host/include
+  TARGET_CFLAGS += -I$(STAGING_DIR_HOSTPKG)/include
 endif
 ifdef CONFIG_USE_MUSL
   TARGET_CFLAGS += -D__UCLIBC__
@@ -71,7 +72,10 @@ HOST_CONFIGURE_ARGS += \
 
 
 HOST_CONFIGURE_VARS += \
-	EMACS="no"
+	EMACS="no" \
+	am_cv_lib_iconv=no \
+	am_cv_func_iconv=no \
+	ac_cv_header_iconv_h=no \
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/lib/libintl-full/include
@@ -83,7 +87,7 @@ define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/share/aclocal
 	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/share/aclocal/* $(1)/usr/share/aclocal/
 
-	$(SED) '/read dummy/d' $(STAGING_DIR)/host/bin/gettextize
+	$(SED) '/read dummy/d' $(STAGING_DIR_HOSTPKG)/bin/gettextize
 endef
 
 define Package/libintl-full/install

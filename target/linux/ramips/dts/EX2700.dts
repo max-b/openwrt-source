@@ -12,11 +12,16 @@
 
 #include "mt7620a.dtsi"
 
+#include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
 
 / {
-	compatible = "ralink,mt7620a-soc";
+	compatible = "netgear,ex2700", "ralink,mt7620a-soc";
 	model = "Netgear EX2700";
+
+	aliases {
+		led-status = &led_power_green;
+	};
 
 	chosen {
 		bootargs = "console=ttyS0,57600";
@@ -25,58 +30,56 @@
 	gpio-leds {
 		compatible = "gpio-leds";
 
-		power_g {
+		led_power_green: power_g {
 			label = "ex2700:green:power";
-			gpios = <&gpio0 9 1>;
+			gpios = <&gpio0 9 GPIO_ACTIVE_LOW>;
 			default-state = "on";
 		};
 
 		power_r {
 			label = "ex2700:red:power";
-			gpios = <&gpio0 11 1>;
+			gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
 		};
 
 		device_g {
 			label = "ex2700:green:device";
-			gpios = <&gpio0 13 1>;
+			gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
 		};
 
 		device_r {
 			label = "ex2700:red:device";
-			gpios = <&gpio0 10 1>;
+			gpios = <&gpio0 10 GPIO_ACTIVE_LOW>;
 		};
 
 		router_g {
 			label = "ex2700:green:router";
-			gpios = <&gpio0 12 1>;
+			gpios = <&gpio0 12 GPIO_ACTIVE_LOW>;
 		};
 
 		router_r {
 			label = "ex2700:red:router";
-			gpios = <&gpio0 14 1>;
+			gpios = <&gpio0 14 GPIO_ACTIVE_LOW>;
 		};
 
 		wps {
 			label = "ex2700:green:wps";
-			gpios = <&gpio1 15 1>;
+			gpios = <&gpio1 15 GPIO_ACTIVE_LOW>;
 		};
 	};
 
 	gpio-keys-polled {
 		compatible = "gpio-keys-polled";
-		#address-cells = <1>;
-		#size-cells = <0>;
 		poll-interval = <20>;
 
 		reset {
 			label = "reset";
-			gpios = <&gpio0 1 1>;
+			gpios = <&gpio0 1 GPIO_ACTIVE_LOW>;
 			linux,code = <KEY_RESTART>;
 		};
 
 		wps {
 			label = "wps";
-			gpios = <&gpio0 2 1>;
+			gpios = <&gpio0 2 GPIO_ACTIVE_LOW>;
 			linux,code = <KEY_WPS_BUTTON>;
 		};
 	};
@@ -94,34 +97,37 @@
 	status = "okay";
 
 	m25p80@0 {
-		#address-cells = <1>;
-		#size-cells = <1>;
 		compatible = "jedec,spi-nor";
 		reg = <0>;
-		linux,modalias = "m25p80", "mx25l3205d";
 		spi-max-frequency = <10000000>;
 
-		partition@0 {
-			label = "u-boot";
-			reg = <0x0 0x30000>;
-			read-only;
-		};
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
 
-		partition@30000 {
-			label = "u-boot-env";
-			reg = <0x30000 0x10000>;
-			read-only;
-		};
+			partition@0 {
+				label = "u-boot";
+				reg = <0x0 0x30000>;
+				read-only;
+			};
 
-		partition@40000 {
-			label = "firmware";
-			reg = <0x40000 0x3b0000>;
-		};
+			partition@30000 {
+				label = "u-boot-env";
+				reg = <0x30000 0x10000>;
+				read-only;
+			};
 
-		art: partition@3f0000 {
-			label = "art";
-			reg = <0x3f0000 0x10000>;
-			read-only;
+			partition@40000 {
+				label = "firmware";
+				reg = <0x40000 0x3b0000>;
+			};
+
+			art: partition@3f0000 {
+				label = "art";
+				reg = <0x3f0000 0x10000>;
+				read-only;
+			};
 		};
 	};
 };
@@ -131,15 +137,13 @@
 };
 
 &wmac {
+	mtd-mac-address = <&art 0x6>;
 	ralink,mtd-eeprom = <&art 0x1000>;
 };
 
 &pinctrl {
 	state_default: pinctrl0 {
 		default {
-			//  spi refclk: pins 37, 38, 39
-			//       uartf: pins 8, 9, 10, 11, 12, 13, 14
-			//         i2c: pins 1, 2
 			ralink,group = "i2c", "uartf", "spi refclk";
 			ralink,function = "gpio";
 		};

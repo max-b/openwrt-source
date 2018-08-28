@@ -9,16 +9,16 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=strace
-
-PKG_VERSION:=4.15
+PKG_VERSION:=4.24
 PKG_RELEASE:=1
-PKG_HASH:=c0cdc094d6141fd9dbf6aaad605142d651ae10998b660fda57fc61f7ad583ca9
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_SOURCE_URL:=@SF/$(PKG_NAME)
+PKG_SOURCE_URL:=https://strace.io/files/$(PKG_VERSION)
+PKG_HASH:=1f4e59fc1edfa2bfb4adf2a748623dc25b105ec79713dd84404199f91b0b0634
 
 PKG_LICENSE:=BSD-3c
 PKG_LICENSE_FILES:=COPYRIGHT
+PKG_CPE_ID:=cpe:/a:paul_kranenburg:strace
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 

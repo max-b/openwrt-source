@@ -3,6 +3,7 @@
 #include "W2914NSV2.dtsi"
 
 / {
+	compatible = "wevo,11acnas", "wevo,w2914ns-v2", "mediatek,mt7621-soc";
 	model = "WeVO 11AC NAS Router";
 
 	memory@0 {
@@ -12,11 +13,6 @@
 
 	gpio-leds {
 		compatible = "gpio-leds";
-
-		// Only USB LED is connected to GPIO.
-		// All of other LEDs are connected directly to
-		// switch, WiFi chip, Vcc, so they are not controllable
-		// via GPIO
 
 		usb {
 			label = "11acnas:green:usb";

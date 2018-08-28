@@ -1,13 +1,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ustream-ssl
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL=$(LEDE_GIT)/project/ustream-ssl.git
-PKG_SOURCE_DATE:=2016-07-02
-PKG_SOURCE_VERSION:=ec80adaa1b47f28d426fa19c692011ce60b992d6
-PKG_MIRROR_HASH:=bfbad6b4e8c1e933f0bfaab43cbdd44a536c08128c3a779e6f2395a6a886aab7
+PKG_SOURCE_URL=$(PROJECT_GIT)/project/ustream-ssl.git
+PKG_SOURCE_DATE:=2018-07-30
+PKG_SOURCE_VERSION:=23a3f2830341acd1db149175baf7315a33bd0edb
+PKG_MIRROR_HASH:=289bef5dac684015b6a40cfd72cf1c8c297bb77cf2efd54e562b628ba3afd83d
 CMAKE_INSTALL:=1
 
 PKG_BUILD_DIR=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_SOURCE_SUBDIR)
@@ -35,18 +35,11 @@ define Package/libustream-openssl
   VARIANT:=openssl
 endef
 
-define Package/libustream-cyassl
+define Package/libustream-wolfssl
   $(Package/libustream/default)
-  TITLE += (cyassl)
-  DEPENDS += +PACKAGE_libustream-cyassl:libcyassl
-  VARIANT:=cyassl
-endef
-
-define Package/libustream-polarssl
-  $(Package/libustream/default)
-  TITLE += (polarssl)
-  DEPENDS += +libpolarssl
-  VARIANT:=polarssl
+  TITLE += (wolfssl)
+  DEPENDS += +PACKAGE_libustream-wolfssl:libwolfssl
+  VARIANT:=wolfssl
 endef
 
 define Package/libustream-mbedtls
@@ -57,12 +50,9 @@ define Package/libustream-mbedtls
   DEFAULT_VARIANT:=1
 endef
 
-ifeq ($(BUILD_VARIANT),cyassl)
+ifeq ($(BUILD_VARIANT),wolfssl)
   TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include/cyassl -DHAVE_SNI
   CMAKE_OPTIONS += -DCYASSL=on
-endif
-ifeq ($(BUILD_VARIANT),polarssl)
-  CMAKE_OPTIONS += -DPOLARSSL=on
 endif
 ifeq ($(BUILD_VARIANT),mbedtls)
   CMAKE_OPTIONS += -DMBEDTLS=on
@@ -74,11 +64,9 @@ define Package/libustream/default/install
 endef
 
 Package/libustream-openssl/install = $(Package/libustream/default/install)
-Package/libustream-cyassl/install = $(Package/libustream/default/install)
-Package/libustream-polarssl/install = $(Package/libustream/default/install)
+Package/libustream-wolfssl/install = $(Package/libustream/default/install)
 Package/libustream-mbedtls/install = $(Package/libustream/default/install)
 
-$(eval $(call BuildPackage,libustream-polarssl))
 $(eval $(call BuildPackage,libustream-mbedtls))
-$(eval $(call BuildPackage,libustream-cyassl))
+$(eval $(call BuildPackage,libustream-wolfssl))
 $(eval $(call BuildPackage,libustream-openssl))

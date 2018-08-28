@@ -12,11 +12,11 @@ PKG_NAME:=sched-cake
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/kdarbyshirebryant/sch_cake.git
-PKG_SOURCE_DATE:=2016-12-19
-PKG_SOURCE_VERSION:=70c8eb766d5afcf3cf187594b7cd776da92bee3c
-PKG_MIRROR_HASH:=16174db5dad0a5b5ba522d4cfc058cff9851ed013a3a05166b04eb127bb12a24
-PKG_MAINTAINER:=Kevin Darbyshire-Bryant <kevin@darbyshire-bryant.me.uk>
+PKG_SOURCE_URL:=https://github.com/dtaht/sch_cake.git
+PKG_SOURCE_DATE:=2018-07-28
+PKG_SOURCE_VERSION:=ce7076ee201802053c47282feff7a180a2941824
+PKG_MIRROR_HASH:=18fde2515169476b214c7af3a9cc7bc5f1d3d84193d1c076d8ca624aeb408385
+PKG_MAINTAINER:=Kevin Darbyshire-Bryant <ldir@darbyshire-bryant.me.uk>
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -36,7 +36,7 @@ define KernelPackage/sched-cake/description
 endef
 
 define Build/Compile
-	$(MAKE) $(KERNEL_MAKEOPTS) SUBDIRS="$(PKG_BUILD_DIR)" modules
+	$(KERNEL_MAKE) SUBDIRS="$(PKG_BUILD_DIR)" modules
 endef
 
 $(eval $(call KernelPackage,sched-cake))

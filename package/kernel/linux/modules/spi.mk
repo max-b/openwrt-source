@@ -43,22 +43,6 @@ endef
 $(eval $(call KernelPackage,spi-bitbang))
 
 
-define KernelPackage/spi-gpio-old
-  SUBMENU:=$(SPI_MENU)
-  TITLE:=Old GPIO based bitbanging SPI controller (DEPRECATED)
-  DEPENDS:=@GPIO_SUPPORT +kmod-spi-bitbang
-  KCONFIG:=CONFIG_SPI_GPIO_OLD
-  FILES:=$(LINUX_DIR)/drivers/spi/spi_gpio_old.ko
-  AUTOLOAD:=$(call AutoProbe,spi_gpio_old)
-endef
-
-define KernelPackage/spi-gpio-old/description
- This package contains the GPIO based bitbanging SPI controller driver
-endef
-
-$(eval $(call KernelPackage,spi-gpio-old))
-
-
 define KernelPackage/spi-gpio
   SUBMENU:=$(SPI_MENU)
   TITLE:=GPIO-based bitbanging SPI Master
@@ -89,20 +73,3 @@ define KernelPackage/spi-dev/description
 endef
 
 $(eval $(call KernelPackage,spi-dev))
-
-define KernelPackage/spi-omap-24xx
-  SUBMENU:=$(SPI_MENU)
-  TITLE:=SPI omap 24xx
-  DEPENDS:=@(TARGET_omap24xx||TARGET_omap)
-  KCONFIG:=CONFIG_SPI_OMAP24XX \
-          CONFIG_SPI=y \
-          CONFIG_SPI_MASTER=y
-  FILES:=$(LINUX_DIR)/drivers/spi/spi-omap2-mcspi.ko
-  AUTOLOAD:=$(call AutoProbe,spi-omap2-mcspi)
-endef
-
-define KernelPackage/spi-dev/description
- This package contains the user mode SPI device driver
-endef
-
-$(eval $(call KernelPackage,spi-omap-24xx))

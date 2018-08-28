@@ -1,6 +1,6 @@
 --- a/drivers/net/wireless/ath/ath10k/Kconfig
 +++ b/drivers/net/wireless/ath/ath10k/Kconfig
-@@ -48,6 +48,12 @@ config ATH10K_TRACING
+@@ -65,6 +65,12 @@ config ATH10K_TRACING
  	---help---
  	  Select this to ath10k use tracing infrastructure.
  
@@ -35,3 +35,13 @@
  int ath10k_thermal_register(struct ath10k *ar);
  void ath10k_thermal_unregister(struct ath10k *ar);
  void ath10k_thermal_event_temperature(struct ath10k *ar, int temperature);
+--- a/local-symbols
++++ b/local-symbols
+@@ -139,6 +139,7 @@ ATH10K_SDIO=
+ ATH10K_USB=
+ ATH10K_DEBUG=
+ ATH10K_DEBUGFS=
++ATH10K_THERMAL=
+ ATH10K_TRACING=
+ ATH10K_DFS_CERTIFIED=
+ WCN36XX=

@@ -22,7 +22,7 @@ define Build/boot-overlay
 
 	$(foreach dts,$(DEVICE_DTS), \
 		$(CP) \
-			$(LINUX_DIR)/arch/$(ARCH)/boot/dts/$(dts).dtb \
+			$(DTS_DIR)/$(dts).dtb \
 			$@.boot/$(IMG_PREFIX)-$(dts).dtb; \
 		ln -sf \
 			$(IMG_PREFIX)-$(dts).dtb \
@@ -34,7 +34,7 @@ define Build/boot-overlay
 		$@.boot/6x_bootscript-$(DEVICE_NAME)
 
 	$(STAGING_DIR_HOST)/bin/mkfs.ubifs \
-		--space-fixup --force-compr=zlib --squash-uids \
+		--space-fixup --compr=zlib --squash-uids \
 		$(MKUBIFS_OPTS) -c 8124 \
 		-o $@.boot.ubifs -d $@.boot
 
@@ -49,6 +49,13 @@ define Build/bootfs.tar.gz
 	$(TAR) -C $@.boot \
 		--numeric-owner --owner=0 --group=0 --transform "s,./,./boot/," \
 		-czvf $@ .
+endef
+
+define Build/boot-scr
+	mkimage -A arm -O linux -T script -C none -a 0 -e 0 \
+	-n '$(DEVICE_ID) OpenWrt bootscript' \
+	-d ./bootscript-$(DEVICE_NAME) \
+	$(BIN_DIR)/boot.scr
 endef
 
 #################################################
@@ -78,6 +85,8 @@ define Device/ventana
 	imx6dl-gw54xx \
 	imx6dl-gw551x \
 	imx6dl-gw552x \
+	imx6dl-gw553x \
+	imx6dl-gw5904 \
 	imx6q-gw51xx \
 	imx6q-gw52xx \
 	imx6q-gw53xx \
@@ -85,12 +94,12 @@ define Device/ventana
 	imx6q-gw5400-a \
 	imx6q-gw551x \
 	imx6q-gw552x \
-	imx6q-gw553x
-  DEVICE_PACKAGES := kmod-thermal-imx kmod-sky2 kmod-usb-chipidea-imx kmod-usb-mxs-phy \
-	kmod-sound-core kmod-sound-soc-imx kmod-sound-soc-imx-sgtl5000 \
+	imx6q-gw553x \
+	imx6q-gw5904
+  DEVICE_PACKAGES := kmod-sky2 kmod-sound-core kmod-sound-soc-imx kmod-sound-soc-imx-sgtl5000 \
 	kmod-can kmod-can-flexcan kmod-can-raw \
 	kmod-hwmon-gsc \
-	kmod-leds-gpio kmod-pps-gpio kmod-gw16083 \
+	kmod-leds-gpio kmod-pps-gpio \
 	kobs-ng
   KERNEL += | boot-overlay
   IMAGES := nand.ubi bootfs.tar.gz
@@ -102,6 +111,7 @@ define Device/ventana
   BLOCKSIZE := 128k
   MKUBIFS_OPTS := -m $$(PAGESIZE) -e 124KiB
 endef
+TARGET_DEVICES += ventana
 
 define Device/ventana-large
   $(Device/ventana)
@@ -112,15 +122,21 @@ define Device/ventana-large
   BLOCKSIZE := 256k
   MKUBIFS_OPTS := -m $$(PAGESIZE) -e 248KiB
 endef
+TARGET_DEVICES += ventana-large
 
 define Device/wandboard
   DEVICE_TITLE := Wandboard Dual
   DEVICE_DTS := imx6dl-wandboard
-  DEVICE_PACKAGES := kmod-thermal-imx kmod-usb-chipidea-imx kmod-usb-mxs-phy
 endef
+TARGET_DEVICES += wandboard
 
-TARGET_DEVICES += \
-	ventana ventana-large \
-	wandboard
+define Device/cubox-i
+  KERNEL := kernel-bin | install-dtb | boot-scr
+  DEVICE_NAME := cubox
+  DEVICE_TITLE := SolidRun CuBox-i
+  DEVICE_PACKAGES := u-boot-mx6cuboxi kmod-drm-imx kmod-drm-imx-hdmi kmod-usb-hid
+  DEVICE_DTS := imx6q-cubox-i imx6dl-cubox-i
+endef
+TARGET_DEVICES += cubox-i
 
 $(eval $(call BuildImage))

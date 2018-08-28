@@ -40,10 +40,10 @@ endef
 
 
 define Build/Compile
-	$(TARGET_CC) $(TARGET_CFLAGS) $(TARGET_LDFLAGS) \
+	$(TARGET_CC) $(TARGET_CFLAGS) $(TARGET_CPPFLAGS) $(TARGET_LDFLAGS) \
 		-o $(PKG_BUILD_DIR)/bsdiff \
 		$(PKG_BUILD_DIR)/bsdiff.c -lbz2
-	$(TARGET_CC) $(TARGET_CFLAGS) $(TARGET_LDFLAGS) \
+	$(TARGET_CC) $(TARGET_CFLAGS) $(TARGET_CPPFLAGS) $(TARGET_LDFLAGS) \
 		-o $(PKG_BUILD_DIR)/bspatch \
 		$(PKG_BUILD_DIR)/bspatch.c -lbz2
 endef
@@ -59,8 +59,8 @@ define Package/bspatch/install
 endef
 
 define Host/Install
-	$(INSTALL_DIR) $(STAGING_DIR)/host/bin/
-	$(MAKE) -C $(HOST_BUILD_DIR) PREFIX=$(STAGING_DIR)/host/ install
+	$(INSTALL_DIR) $(STAGING_DIR_HOSTPKG)/bin/
+	$(MAKE) -C $(HOST_BUILD_DIR) PREFIX=$(STAGING_DIR_HOSTPKG)/ install
 endef
 
 define Host/Compile
@@ -70,7 +70,7 @@ define Host/Compile
 endef
 
 define Host/Install
-	$(INSTALL_BIN) $(HOST_BUILD_DIR)/bsdiff $(STAGING_DIR)/host/bin/
+	$(INSTALL_BIN) $(HOST_BUILD_DIR)/bsdiff $(STAGING_DIR_HOSTPKG)/bin/
 endef
 
 $(eval $(call HostBuild))

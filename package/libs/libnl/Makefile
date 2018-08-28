@@ -8,13 +8,16 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libnl
-PKG_VERSION:=3.2.28
+PKG_VERSION:=3.4.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://github.com/thom311/libnl/releases/download/libnl3_2_28
-PKG_HASH:=cd608992c656e8f6e3ab6c1391b162a5a51c49336b9219f7f390e61fc5437c41
+PKG_SOURCE_URL:=https://github.com/thom311/libnl/releases/download/libnl3_4_0
+PKG_HASH:=b7287637ae71c6db6f89e1422c995f0407ff2fe50cecd61a312b6a9b0921f5bf
 PKG_LICENSE:=LGPL-2.1
+
+PKG_INSTALL:=1
+PKG_FIXUP:=autoreconf
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -75,14 +78,10 @@ define Package/libnl/description
  message construction and parsing, object caching system, etc.
 endef
 
-TARGET_CFLAGS += -ffunction-sections $(FPIC)
+TARGET_CFLAGS += -ffunction-sections -fdata-sections $(FPIC)
 
-define Build/Compile
-	$(call Build/Compile/Default)
-	make -C $(PKG_BUILD_DIR) \
-		DESTDIR="$(PKG_INSTALL_DIR)" \
-		install
-endef
+CONFIGURE_ARGS += \
+	--disable-debug
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include/libnl3 $(1)/usr/lib/pkgconfig

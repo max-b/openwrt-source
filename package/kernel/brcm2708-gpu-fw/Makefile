@@ -1,6 +1,6 @@
 #
 # Copyright (C) 2012-2016 OpenWrt.org
-# Copyright (C) 2016 LEDE project
+# Copyright (C) 2017 LEDE project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -9,8 +9,8 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=brcm2708-gpu-fw
-PKG_VERSION:=2016-12-04
-PKG_RELEASE:=d760a4ffd378c648ff5d9854e26dc868a5e1fd09
+PKG_VERSION:=2018-05-16
+PKG_RELEASE:=0f5f899ccec1c2ef8bba02aa49700b4ec19b4199
 
 PKG_BUILD_DIR:=$(KERNEL_BUILD_DIR)/$(PKG_NAME)/rpi-firmware-$(PKG_RELEASE)
 
@@ -33,7 +33,7 @@ define Download/bootcode_bin
   FILE:=$(RPI_FIRMWARE_FILE)-bootcode.bin
   URL:=$(RPI_FIRMWARE_URL)
   URL_FILE:=bootcode.bin
-  HASH:=a11bd31647c25712648757be75a19fa78c1df6f2409c7bf9bd202903f0421c0c
+  HASH:=c9eb5258766fabf7127e790b257f106e2717f0ccaaed37544b970b0d113956fc
 endef
 $(eval $(call Download,bootcode_bin))
 
@@ -41,7 +41,7 @@ define Download/fixup_dat
   FILE:=$(RPI_FIRMWARE_FILE)-fixup.dat
   URL:=$(RPI_FIRMWARE_URL)
   URL_FILE:=fixup.dat
-  HASH:=93314d9e01fb53bdf4a25422de89d103cd2e779bd5e81663c658eaecd0c8018e
+  HASH:=8a6311e73d0f349be9b8424db0644fd8f48aaf721f3f2f487488c83d7316cbdf
 endef
 $(eval $(call Download,fixup_dat))
 
@@ -49,7 +49,7 @@ define Download/fixup_cd_dat
   FILE:=$(RPI_FIRMWARE_FILE)-fixup_cd.dat
   URL:=$(RPI_FIRMWARE_URL)
   URL_FILE:=fixup_cd.dat
-  HASH:=638671b81590bfdda5eac683d2025e50bb71c663e702f047ef299e23722f6cdd
+  HASH:=973b008aae9711d57ddce4f058354fe5a0b4725dd825673f784a2e2754da1f28
 endef
 $(eval $(call Download,fixup_cd_dat))
 
@@ -57,7 +57,7 @@ define Download/start_elf
   FILE:=$(RPI_FIRMWARE_FILE)-start.elf
   URL:=$(RPI_FIRMWARE_URL)
   URL_FILE:=start.elf
-  HASH:=cd60fdce9022fa1195a27f3fdf8eba9136476649006e33b72cbdb23dc3b74e90
+  HASH:=8e77c4cce7e44ced609e5046dd55f19cb7656a8ce4694e733b7eb6ecab915fe1
 endef
 $(eval $(call Download,start_elf))
 
@@ -65,7 +65,7 @@ define Download/start_cd_elf
   FILE:=$(RPI_FIRMWARE_FILE)-start_cd.elf
   URL:=$(RPI_FIRMWARE_URL)
   URL_FILE:=start_cd.elf
-  HASH:=2f0cdcdaad7b9bf64f5288e206d54e007597c0c4068a5b893c02e0f4c0785ca5
+  HASH:=25223b479b7aca1d74c6f7a1829aba69fd14906ca5b25ae12571fe71ea2c5a4a
 endef
 $(eval $(call Download,start_cd_elf))
 

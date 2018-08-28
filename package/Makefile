@@ -7,11 +7,12 @@
 
 curdir:=package
 
+include $(INCLUDE_DIR)/feeds.mk
 include $(INCLUDE_DIR)/rootfs.mk
 
 -include $(TMP_DIR)/.packagedeps
+$(curdir)/autoremove:=1
 $(curdir)/builddirs:=$(sort $(package-) $(package-y) $(package-m))
-$(curdir)/builddirs-install:=.
 $(curdir)/builddirs-default:=. $(sort $(package-y) $(package-m))
 $(curdir)/builddirs-prereq:=. $(sort $(prereq-y) $(prereq-m))
 ifdef CHECK_ALL
@@ -56,10 +57,14 @@ $(curdir)/merge:
 $(curdir)/merge-index: $(curdir)/merge
 	(cd $(PACKAGE_DIR_ALL) && $(SCRIPT_DIR)/ipkg-make-index.sh . 2>&1 > Packages; )
 
-$(curdir)/install: $(TMP_DIR)/.build $(curdir)/system/opkg/host/install $(curdir)/merge $(if $(CONFIG_TARGET_PER_DEVICE_ROOTFS),$(curdir)/merge-index)
+ifndef SDK
+  $(curdir)/compile: $(curdir)/system/opkg/host/compile
+endif
+
+$(curdir)/install: $(TMP_DIR)/.build $(curdir)/merge $(if $(CONFIG_TARGET_PER_DEVICE_ROOTFS),$(curdir)/merge-index)
 	- find $(STAGING_DIR_ROOT) -type d | $(XARGS) chmod 0755
 	rm -rf $(TARGET_DIR) $(TARGET_DIR_ORIG)
-	[ -d $(TARGET_DIR)/tmp ] || mkdir -p $(TARGET_DIR)/tmp
+	mkdir -p $(TARGET_DIR)/tmp
 	$(call opkg,$(TARGET_DIR)) install \
 		$(call opkg_package_files,$(shell cat $(PACKAGE_INSTALL_FILES) 2>/dev/null))
 	@for file in $(PACKAGE_INSTALL_FILES); do \
@@ -68,20 +73,10 @@ $(curdir)/install: $(TMP_DIR)/.build $(curdir)/system/opkg/host/install $(curdir
 			$(call opkg,$(TARGET_DIR)) flag $$flag `cat $$file`; \
 		done; \
 	done || true
-	@-$(MAKE) package/preconfig
 
 	$(CP) $(TARGET_DIR) $(TARGET_DIR_ORIG)
 
-	$(call prepare_rootfs,$(TARGET_DIR))
-
-PASSOPT=""
-PASSARG=""
-ifndef CONFIG_OPKGSMIME_PASSPHRASE
-  ifneq ($(call qstrip,$(CONFIG_OPKGSMIME_PASSFILE)),)
-    PASSOPT="-passin"
-    PASSARG="file:$(call qstrip,$(CONFIG_OPKGSMIME_PASSFILE))"
-  endif
-endif
+	$(call prepare_rootfs,$(TARGET_DIR),$(TOPDIR)/files)
 
 $(curdir)/index: FORCE
 	@echo Generating package index...
@@ -99,28 +94,7 @@ ifdef CONFIG_SIGNED_PACKAGES
 			cd $$d || continue; \
 		$(STAGING_DIR_HOST)/bin/usign -S -m Packages -s $(BUILD_KEY); \
 	); done
-else
-ifeq ($(call qstrip,$(CONFIG_OPKGSMIME_KEY)),)
-	@echo Signing key has not been configured
-else
-ifeq ($(call qstrip,$(CONFIG_OPKGSMIME_CERT)),)
-	@echo Certificate has not been configured
-else
-	@echo Signing package index...
-	@for d in $(PACKAGE_SUBDIRS); do ( \
-		[ -d $$d ] && \
-			cd $$d || continue; \
-		openssl smime -binary -in Packages.gz \
-			-out Packages.sig -outform PEM -sign \
-			-signer $(CONFIG_OPKGSMIME_CERT) \
-			-inkey $(CONFIG_OPKGSMIME_KEY) \
-			$(PASSOPT) $(PASSARG); \
-	); done
 endif
-endif
-endif
-
-$(curdir)/preconfig:
 
 $(curdir)/flags-install:= -j1
 
